@@ -64,13 +64,42 @@ const RecordControls: React.FC<Props> = ({ setStatus, setResults }) => {
   };
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="space-y-4">
       <button
         onClick={() => (recording ? stopRecording() : startRecording())}
-        className={`px-4 py-2 rounded text-white ${recording ? "bg-red-600" : "bg-green-600"}`}>
-        {recording ? "Stop Recording" : "Start Recording"}
+        className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center space-x-2 shadow-sm ${
+          recording 
+            ? "bg-red-600 hover:bg-red-700 text-white animate-pulse" 
+            : "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover:shadow-md"
+        }`}
+        disabled={!recording && !mediaRecorderRef.current}
+      >
+        {recording ? (
+          <>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10h6v4H9V10z" />
+            </svg>
+            <span>Stop Recording</span>
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+            <span>Start Recording</span>
+          </>
+        )}
       </button>
-      <div className="text-sm text-gray-700">Microphone will be requested when starting.</div>
+      
+      <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded-md border border-blue-100">
+        <div className="flex items-center space-x-1">
+          <svg className="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Microphone access will be requested when starting</span>
+        </div>
+      </div>
     </div>
   );
 };

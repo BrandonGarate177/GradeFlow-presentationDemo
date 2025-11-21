@@ -57,73 +57,97 @@ export default function Page() {
 
   return (
     <Layout>
-      <div className="flex h-full">
+      <div className="flex h-screen bg-white">
         <aside
-          className="p-4 border-r border-gray-200 bg-white transition-all duration-150 overflow-hidden relative"
-          style={{ width: sidebarOpen ? sidebarWidth : 0, minWidth: sidebarOpen ? 200 : 0 }}
+          className="bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ease-in-out relative flex flex-col"
+          style={{ width: sidebarOpen ? sidebarWidth : 0, minWidth: sidebarOpen ? 280 : 0 }}
         >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Rubric</h3>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setSidebarWidth(320)}
-                className="text-xs px-2 py-1 rounded bg-gray-100"
-                title="Reset width"
-              >
-                Reset
-              </button>
-              <button
-                onClick={toggleSidebar}
-                className="text-xs px-2 py-1 rounded bg-gray-100"
-                title={sidebarOpen ? "Hide panel" : "Show panel"}
-              >
-                {sidebarOpen ? "Hide" : "Show"}
-              </button>
+          <div className="flex-shrink-0 p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Evaluation Rubric
+              </h3>
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={() => setSidebarWidth(320)}
+                  className="text-xs px-2 py-1 rounded-md bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
+                  title="Reset width"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={toggleSidebar}
+                  className="text-xs px-2 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+                  title={sidebarOpen ? "Hide panel" : "Show panel"}
+                >
+                  {sidebarOpen ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
           </div>
 
           {sidebarOpen && (
-            <>
-              <RequirementsPanel />
-              <div className="mt-4">
-                <RecordControls setStatus={setStatus} setResults={setResults} />
-                <div className="text-sm text-gray-600">Status: {status}</div>
-                {results && <ResultsPanel results={results} />}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 p-6 overflow-y-auto">
+                <RequirementsPanel />
               </div>
-            </>
+              
+              <div className="flex-shrink-0 p-6 border-t border-gray-100 bg-gray-50">
+                <RecordControls setStatus={setStatus} setResults={setResults} />
+                <div className="mt-3 px-3 py-2 rounded-md bg-white border border-gray-200">
+                  <div className="text-xs font-medium text-gray-500 mb-1">Status</div>
+                  <div className="text-sm font-medium text-gray-800 flex items-center">
+                    <div className={`w-2 h-2 rounded-full mr-2 ${
+                      status === "Recording" ? "bg-red-500 animate-pulse" :
+                      status === "Processing" ? "bg-yellow-500 animate-pulse" :
+                      status === "Completed" ? "bg-green-500" :
+                      "bg-gray-400"
+                    }`} />
+                    {status}
+                  </div>
+                </div>
+                {results && (
+                  <div className="mt-4">
+                    <ResultsPanel results={results} />
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
-          {/* resizer: small visible handle at the right edge */}
+          {/* Modern resizer handle */}
           {sidebarOpen && (
             <div
               onMouseDown={handleMouseDown}
-              style={{
-                position: "absolute",
-                top: 0,
-                right: -4,
-                height: "100%",
-                width: 8,
-                cursor: "col-resize",
-                zIndex: 40,
-              }}
-            />
+              className="absolute top-0 -right-1 h-full w-2 cursor-col-resize group hover:bg-blue-200 transition-colors"
+              style={{ zIndex: 40 }}
+            >
+              <div className="absolute top-1/2 -translate-y-1/2 right-0.5 w-0.5 h-8 bg-gray-300 group-hover:bg-blue-400 transition-colors rounded-full" />
+            </div>
           )}
         </aside>
 
-        <main className="flex-1 p-4">
-          {/* show a small open button when sidebar is closed */}
+        <main className="flex-1 flex flex-col bg-gray-50 relative">
+          {/* Modern show button when sidebar is closed */}
           {!sidebarOpen && (
             <button
               onClick={toggleSidebar}
-              className="mb-4 px-2 py-1 rounded bg-gray-100"
-              style={{ position: "absolute", left: 6, top: 80, zIndex: 50 }}
+              className="absolute top-4 left-4 z-50 px-3 py-2 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 flex items-center space-x-2"
             >
-              Show Rubric
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <span className="font-medium">Show Rubric</span>
             </button>
           )}
-          <div className="space-y-4">
-            <SlidesViewer />
-
+          
+          <div className="flex-1 p-6">
+            <div className="h-full">
+              <SlidesViewer />
+            </div>
           </div>
         </main>
       </div>
