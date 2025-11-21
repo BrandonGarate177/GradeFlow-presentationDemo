@@ -22,16 +22,19 @@ FROM alpine:latest AS production
 # Install ca-certificates for SSL/TLS
 RUN apk --no-cache add ca-certificates tzdata
 
-WORKDIR /root/
-
 # Create non-root user for security
 RUN addgroup -g 1001 -S appgroup && \
     adduser -u 1001 -S appuser -G appgroup
 
+# Create app directory with proper permissions
+RUN mkdir -p /app && chown -R appuser:appgroup /app
+
+WORKDIR /app
+
 # Copy binary from builder stage
 COPY --from=builder /app/server .
 
-# Change ownership to non-root user
+# Ensure binary has correct permissions
 RUN chown appuser:appgroup server && chmod +x server
 
 # Switch to non-root user
