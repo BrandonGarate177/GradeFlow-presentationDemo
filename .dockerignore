@@ -1,0 +1,44 @@
+# Build artifacts
+/backend/server
+/backend/cmd/server/server
+
+# Go build cache
+.cache/
+
+# Environment files
+.env
+.env.local
+
+# Development files
+*.log
+*.tmp
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Frontend files (since this is backend-only)
+/frontend/
+/docker/Dockerfile.frontend
+
+# Test files
+*_test.go
+testdata/
+
+# Development scripts
+scripts/
