@@ -15,51 +15,89 @@ const RecordControls: React.FC<Props> = ({ setStatus, setResults }) => {
   const [recording, setRecording] = useState(false);
 
   const startRecording = async () => {
-    setStatus("Requesting mic...");
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mr = new MediaRecorder(stream);
-    mediaRecorderRef.current = mr;
-    chunksRef.current = [];
+    try {
+      console.log("Starting recording...");
+      setStatus("Requesting mic...");
+      
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log("Got media stream:", stream);
+      
+      const mr = new MediaRecorder(stream);
+      mediaRecorderRef.current = mr;
+      chunksRef.current = [];
 
-    mr.ondataavailable = (e) => {
-      if (e.data.size > 0) chunksRef.current.push(e.data);
-    };
+      mr.ondataavailable = (e) => {
+        console.log("Data available:", e.data.size, "bytes");
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
 
-    mr.onstart = () => {
-      setRecording(true);
-      setStatus("Recording...");
-    };
+      mr.onstart = () => {
+        console.log("Recording started");
+        setRecording(true);
+        setStatus("Recording...");
+      };
 
-    mr.start();
+      mr.onerror = (e) => {
+        console.error("MediaRecorder error:", e);
+        setStatus("Recording error");
+      };
+
+      console.log("Starting MediaRecorder...");
+      mr.start();
+    } catch (err) {
+      console.error("Failed to start recording:", err);
+      setStatus("Failed to access microphone");
+    }
   };
 
   const stopRecording = async () => {
+    console.log("Stopping recording...");
     setStatus("Stopping...");
     const mr = mediaRecorderRef.current;
-    if (!mr) return;
+    if (!mr) {
+      console.log("No MediaRecorder found");
+      return;
+    }
+    
     return new Promise<void>((resolve) => {
       mr.onstop = async () => {
+        console.log("Recording stopped, chunks:", chunksRef.current.length);
         setRecording(false);
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        console.log("Created blob:", blob.size, "bytes");
 
         // Upload to backend
         setStatus("Uploading & grading...");
         try {
+          console.log("Uploading to backend...");
           const res = await gradePresentation(blob);
+          console.log("Got response:", res);
           setResults(res);
           setStatus("Done");
         } catch (err) {
-          console.error(err);
+          console.error("Upload/grading error:", err);
           setStatus("Error uploading or grading");
         }
 
         resolve();
       };
+      
+      console.log("Calling mr.stop()...");
       mr.stop();
+      
       // stop tracks
       try {
-        (mr as any).stream?.getTracks?.().forEach((t: MediaStreamTrack) => t.stop());
-      } catch {}
+        const stream = (mr as any).stream;
+        if (stream && stream.getTracks) {
+          console.log("Stopping media tracks...");
+          stream.getTracks().forEach((t: MediaStreamTrack) => {
+            console.log("Stopping track:", t.kind);
+            t.stop();
+          });
+        }
+      } catch (e) {
+        console.warn("Error stopping tracks:", e);
+      }
     });
   };
 
@@ -72,7 +110,6 @@ const RecordControls: React.FC<Props> = ({ setStatus, setResults }) => {
             ? "bg-red-600 hover:bg-red-700 text-white animate-pulse" 
             : "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover:shadow-md"
         }`}
-        disabled={!recording && !mediaRecorderRef.current}
       >
         {recording ? (
           <>

@@ -5,7 +5,6 @@ import Layout from "../components/Layout";
 import RequirementsPanel from "../components/RequirementsPanel";
 import SlidesViewer from "../components/SlidesViewer";
 import RecordControls from "../components/RecordControls";
-import ResultsPanel from "../components/ResultsPanel";
 import type { GradePresentationResponse } from "../lib/api";
 
 export default function Page() {
@@ -65,9 +64,7 @@ export default function Page() {
           <div className="flex-shrink-0 p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+      
                 Evaluation Rubric
               </h3>
               <div className="flex items-center space-x-1">
@@ -92,7 +89,7 @@ export default function Page() {
           {sidebarOpen && (
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="flex-1 p-6 overflow-y-auto">
-                <RequirementsPanel />
+                <RequirementsPanel results={results} />
               </div>
               
               <div className="flex-shrink-0 p-6 border-t border-gray-100 bg-gray-50">
@@ -109,11 +106,6 @@ export default function Page() {
                     {status}
                   </div>
                 </div>
-                {results && (
-                  <div className="mt-4">
-                    <ResultsPanel results={results} />
-                  </div>
-                )}
               </div>
             </div>
           )}

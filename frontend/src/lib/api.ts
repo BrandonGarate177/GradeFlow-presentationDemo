@@ -8,12 +8,10 @@ export interface GradePresentationResponse {
     filler_words: number;
   };
   transcript: string;
-  feedback: {
-    summary: string;
-    strengths: string[];
-    areas_to_improve: string[];
-    suggested_script: string;
-  };
+  summary: string;
+  strengths: string[];
+  areas_to_improve: string[];
+  suggested_script: string;
 }
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
