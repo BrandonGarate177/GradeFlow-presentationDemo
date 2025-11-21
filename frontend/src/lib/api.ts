@@ -14,7 +14,7 @@ export interface GradePresentationResponse {
   suggested_script: string;
 }
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BACKEND = "https://gradeflow-backend-931693461442.us-west1.run.app"; 
 
 export async function gradePresentation(file: Blob): Promise<GradePresentationResponse> {
   const fd = new FormData();
