@@ -1,0 +1,7 @@
+FROM golang:1.21-alpine
+WORKDIR /app
+COPY ./backend /app
+RUN apk add --no-cache git
+RUN go build -o /bin/server ./cmd/server
+EXPOSE 8080
+CMD ["/bin/server"]
