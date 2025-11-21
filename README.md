@@ -152,3 +152,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **OpenAI** for GPT-based presentation analysis
 - **ElevenLabs** for high-quality text-to-speech synthesis
 - **Google Slides** for presentation embedding capabilities
+
