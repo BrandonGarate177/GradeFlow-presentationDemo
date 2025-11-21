@@ -7,3 +7,4 @@ backend/public/audio/*.mp3
 dist/
 /.DS_Store
 deploy.sh
+out 
