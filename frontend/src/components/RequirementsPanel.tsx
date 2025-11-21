@@ -1,98 +1,131 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
-const REQUIREMENTS = [
-  { id: 1, text: "Clear introduction", description: "Strong opening that engages audience", weight: 15 },
-  { id: 2, text: "3+ main points", description: "Well-structured content with clear arguments", weight: 25 },
-  { id: 3, text: "Logical structure", description: "Smooth transitions and coherent flow", weight: 20 },
-  { id: 4, text: "Good pacing", description: "Appropriate timing and rhythm", weight: 15 },
-  { id: 5, text: "Confident delivery", description: "Clear voice, good posture, eye contact", weight: 15 },
-  { id: 6, text: "Clear visuals", description: "Effective and readable slides", weight: 10 },
+const GRADING_CRITERIA = [
+  { 
+    id: "clarity", 
+    text: "Clarity", 
+    description: "Clear articulation, pronunciation, and vocal quality",
+    maxScore: 100 
+  },
+  { 
+    id: "structure", 
+    text: "Structure", 
+    description: "Logical organization and flow of content",
+    maxScore: 100 
+  },
+  { 
+    id: "delivery", 
+    text: "Delivery", 
+    description: "Confidence, body language, and engagement",
+    maxScore: 100 
+  },
+  { 
+    id: "pacing", 
+    text: "Pacing", 
+    description: "Appropriate speed and rhythm throughout presentation",
+    maxScore: 100 
+  },
+  { 
+    id: "filler_words", 
+    text: "Filler Words", 
+    description: "Minimal use of 'um', 'uh', and other filler words",
+    maxScore: 100 
+  },
 ];
 
 const RequirementsPanel: React.FC = () => {
-  const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
-
-  const toggleCheck = (id: number) => {
-    setCheckedItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
+  // Mock data for last trial - in real app this would come from API
+  const lastTrialGrades = {
+    clarity: 82,
+    structure: 76,
+    delivery: 70,
+    pacing: 88,
+    filler_words: 64
   };
 
-  const completionPercentage = Math.round((checkedItems.size / REQUIREMENTS.length) * 100);
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-emerald-600';
+    if (score >= 80) return 'text-green-600';
+    if (score >= 70) return 'text-yellow-600';
+    if (score >= 60) return 'text-orange-600';
+    return 'text-red-600';
+  };
+
+  const getScoreBackground = (score: number) => {
+    if (score >= 90) return 'bg-emerald-50 border-emerald-200';
+    if (score >= 80) return 'bg-green-50 border-green-200';
+    if (score >= 70) return 'bg-yellow-50 border-yellow-200';
+    if (score >= 60) return 'bg-orange-50 border-orange-200';
+    return 'bg-red-50 border-red-200';
+  };
+
+  const overallScore = Math.round(
+    Object.values(lastTrialGrades).reduce((sum, score) => sum + score, 0) / Object.values(lastTrialGrades).length
+  );
 
   return (
     <div className="space-y-4">
-      {/* Progress indicator */}
+      {/* Overall Score */}
       <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-600">Progress</span>
-          <span className="text-sm font-bold text-blue-600">{completionPercentage}%</span>
+          <span className="text-sm font-medium text-gray-600">Overall Score</span>
+          <span className={`text-2xl font-bold ${getScoreColor(overallScore)}`}>
+            {overallScore}
+          </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-3">
           <div 
-            className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
-            style={{ width: `${completionPercentage}%` }}
+            className={`h-3 rounded-full transition-all duration-300 ease-out ${
+              overallScore >= 90 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' :
+              overallScore >= 80 ? 'bg-gradient-to-r from-green-500 to-green-600' :
+              overallScore >= 70 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+              overallScore >= 60 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+              'bg-gradient-to-r from-red-500 to-red-600'
+            }`}
+            style={{ width: `${overallScore}%` }}
           />
         </div>
         <div className="text-xs text-gray-500 mt-1">
-          {checkedItems.size} of {REQUIREMENTS.length} criteria met
+          Last Trial Results
         </div>
       </div>
 
-      {/* Requirements list */}
+      {/* Detailed Scores */}
       <div className="space-y-3">
-        {REQUIREMENTS.map((requirement) => {
-          const isChecked = checkedItems.has(requirement.id);
+        {GRADING_CRITERIA.map((criterion) => {
+          const score = lastTrialGrades[criterion.id as keyof typeof lastTrialGrades];
           return (
             <div 
-              key={requirement.id} 
-              className={`p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:shadow-md ${
-                isChecked 
-                  ? 'border-green-200 bg-green-50' 
-                  : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}
-              onClick={() => toggleCheck(requirement.id)}
+              key={criterion.id} 
+              className={`p-4 rounded-lg border-2 transition-all duration-200 ${getScoreBackground(score)}`}
             >
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                    isChecked 
-                      ? 'border-green-500 bg-green-500' 
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}>
-                    {isChecked && (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h4 className={`text-sm font-medium transition-colors ${
-                      isChecked ? 'text-green-800' : 'text-gray-800'
-                    }`}>
-                      {requirement.text}
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-sm font-medium text-gray-800">
+                      {criterion.text}
                     </h4>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                        {requirement.weight}%
-                      </span>
-                    </div>
+                    <span className={`text-lg font-bold ${getScoreColor(score)}`}>
+                      {score}
+                    </span>
                   </div>
-                  <p className={`text-xs mt-1 transition-colors ${
-                    isChecked ? 'text-green-600' : 'text-gray-500'
-                  }`}>
-                    {requirement.description}
+                  <p className="text-xs text-gray-600 mb-2">
+                    {criterion.description}
                   </p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ease-out ${
+                        score >= 90 ? 'bg-emerald-500' :
+                        score >= 80 ? 'bg-green-500' :
+                        score >= 70 ? 'bg-yellow-500' :
+                        score >= 60 ? 'bg-orange-500' :
+                        'bg-red-500'
+                      }`}
+                      style={{ width: `${score}%` }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -100,17 +133,26 @@ const RequirementsPanel: React.FC = () => {
         })}
       </div>
 
-      {/* Summary */}
+      {/* Grade Summary */}
       <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
         <div className="text-xs text-slate-600 space-y-1">
           <div className="flex justify-between">
-            <span>Total Weight:</span>
-            <span className="font-medium">100%</span>
+            <span>Total Criteria:</span>
+            <span className="font-medium">{GRADING_CRITERIA.length}</span>
           </div>
           <div className="flex justify-between">
-            <span>Completed:</span>
-            <span className={`font-medium ${checkedItems.size === REQUIREMENTS.length ? 'text-green-600' : 'text-slate-600'}`}>
-              {REQUIREMENTS.filter(r => checkedItems.has(r.id)).reduce((sum, r) => sum + r.weight, 0)}%
+            <span>Average Score:</span>
+            <span className={`font-medium ${getScoreColor(overallScore)}`}>
+              {overallScore}/100
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>Grade:</span>
+            <span className={`font-medium ${getScoreColor(overallScore)}`}>
+              {overallScore >= 90 ? 'A' : 
+               overallScore >= 80 ? 'B' : 
+               overallScore >= 70 ? 'C' : 
+               overallScore >= 60 ? 'D' : 'F'}
             </span>
           </div>
         </div>

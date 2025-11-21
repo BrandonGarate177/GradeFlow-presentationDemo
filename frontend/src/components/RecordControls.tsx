@@ -92,7 +92,7 @@ const RecordControls: React.FC<Props> = ({ setStatus, setResults }) => {
         )}
       </button>
       
- 
+
     </div>
   );
 };

@@ -2,9 +2,10 @@ export interface GradePresentationResponse {
   score_overall: number;
   scores: {
     clarity: number;
-    pacing: number;
-    confidence: number;
     structure: number;
+    delivery: number;
+    pacing: number;
+    filler_words: number;
   };
   transcript: string;
   feedback: {
@@ -13,7 +14,6 @@ export interface GradePresentationResponse {
     areas_to_improve: string[];
     suggested_script: string;
   };
-  model_delivery_audio_url: string;
 }
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
