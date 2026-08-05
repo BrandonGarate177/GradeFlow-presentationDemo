@@ -1,4 +1,4 @@
-# GradeFlow - Presentation Demo
+# Practice your Google Slides
 
 An AI-powered presentation preparation and grading tool that helps users improve their public speaking skills through real-time feedback and analysis.
 
