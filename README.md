@@ -118,7 +118,7 @@ npm run dev
 ## Project Structure
 
 ```
-GradeFlow-presentationDemo/
+Presentation-Skillz/
 ├── frontend/                 # Next.js frontend application
 │   ├── src/
 │   │   ├── app/             # Next.js 13+ app router
